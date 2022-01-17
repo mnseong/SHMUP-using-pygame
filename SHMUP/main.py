@@ -8,18 +8,18 @@ class Character:
         self.x = 0
         self.y = 0
         self.velocity = 0
-
+    
     def put_img(self, address):
         if address[-3:] == "png":
             self.img = pg.image.load(address).convert_alpha()
         else:
             self.img = pg.image.load(address)
         self.width, self.height = self.img.get_size()
-
+    
     def change_size(self, width, height):
         self.img = pg.transform.scale(self.img, (width, height))
         self.width, self.height = self.img.get_size()
-
+    
     def show(self):
         screen.blit(self.img, (self.x, self.y))
 
@@ -28,6 +28,9 @@ def main():
     left_go = False
     right_go = False
     space_go = False
+    k = 0
+
+    attacks = []
 
     player = Character()
     player.put_img("image/fighter.png")
@@ -48,11 +51,16 @@ def main():
                     left_go = True
                 elif event.key == K_RIGHT:
                     right_go = True
+                elif event.key == K_SPACE:
+                    space_go = True
+                    k = 0
             elif event.type == KEYUP:
                 if event.key == K_LEFT:
                     left_go = False
                 elif event.key == K_RIGHT:
                     right_go = False
+                elif event.key == K_SPACE:
+                    space_go = False
         if left_go == True:
             player.x -= player.velocity
             if player.x <= 0:
@@ -61,9 +69,31 @@ def main():
             player.x += player.velocity
             if player.x >= size[0] - player.width:
                 player.x = size[0] - player.width
+        
+        if space_go == True and k % 15 == 0:
+            lightning = Character()
+            lightning.put_img("image/lightning.png")
+            lightning.change_size(50, 50)
+            lightning.x = round(player.x + (player.width - lightning.width))
+            lightning.y = player.y
+            lightning.velocity = 12
+            attacks.append(lightning)
+        k += 1
+
+        garbage = []
+        for i in range(len(attacks)):
+            attack = attacks[i]
+            attack.y -= attack.velocity
+            if attack.y <= -attack.height:
+                garbage.append(i)
+        garbage.reverse()
+        for i in garbage:
+            del attacks[i]
 
         screen.fill(BLACK)
         player.show()
+        for attack in attacks:
+            attack.show()
         pg.display.flip()
 
 
@@ -79,4 +109,4 @@ if __name__ == "__main__":
         going = main()
         if not going:
             break
-    pg.quit() 
+    pg.quit()
