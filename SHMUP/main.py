@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.locals import *
+import random
 
 BLACK = (0, 0, 0)
 
@@ -23,6 +24,13 @@ class Character:
     def show(self):
         screen.blit(self.img, (self.x, self.y))
 
+class Enemy(Character):
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.velocity = 0
+        self.hp = 0
+
 
 def main():
     left_go = False
@@ -31,6 +39,7 @@ def main():
     k = 0
 
     attacks = []
+    enemies = []
 
     player = Character()
     player.put_img("image/fighter.png")
@@ -74,7 +83,7 @@ def main():
             lightning = Character()
             lightning.put_img("image/lightning.png")
             lightning.change_size(50, 50)
-            lightning.x = round(player.x + (player.width - lightning.width))
+            lightning.x = round(player.x + (player.width - lightning.width) / 2)
             lightning.y = player.y
             lightning.velocity = 12
             attacks.append(lightning)
@@ -89,11 +98,43 @@ def main():
         garbage.reverse()
         for i in garbage:
             del attacks[i]
+    
+        if random.random() > 0.98:
+            mob = Enemy()
+            mob.put_img("image/enemy1.png")
+            mob.change_size(60, 60)
+            mob.x = random.randrange(0, size[0] - mob.width - round(player.width / 2))
+            mob.y = 10
+            mob.velocity = random.randrange(3, 7)
+            mob.hp = 1
+            enemies.append(mob)
+        
+        if random.random() > 0.998:
+            boss = Enemy()
+            boss.put_img("image/enemy2.png")
+            boss.change_size(150, 130)
+            boss.x = random.randrange(0, size[0] - boss.width - round(player.width / 2))
+            boss.y = 10
+            boss.velocity = 1
+            boss.hp = 10
+            enemies.append(boss)
+
+        garbage = []  # 초기화
+        for i in range(len(enemies)):
+            enemy = enemies[i]
+            enemy.y += enemy.velocity
+            if enemy.y >= size[1]:
+                garbage.append(i)
+        garbage.reverse()
+        for i in garbage:
+            del enemies[i]
 
         screen.fill(BLACK)
         player.show()
         for attack in attacks:
             attack.show()
+        for enemy in enemies:
+            enemy.show()
         pg.display.flip()
 
 
