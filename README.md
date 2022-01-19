@@ -5,4 +5,5 @@
 ### Image file
 * SHMUP/image/fighter.png - https://www.iconfinder.com
 * SHMUP/image/enemy1.png - https://www.iconfinder.com
+* SHMUP/image/enemy2.png - https://www.iconfinder.com
 * SHMUP/image/lightning.png - https://www.pngwing.com
