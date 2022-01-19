@@ -31,6 +31,13 @@ class Enemy(Character):
         self.velocity = 0
         self.hp = 0
 
+def crash(a, b):
+    if (a.x - b.width + 10 <= b.x <= a.x + a.width - 10 and 
+        a.y - b.height + 10 <= b.y <= a.y + a.height - 10):
+        return True
+    else:
+        return False
+
 
 def main():
     left_go = False
@@ -128,6 +135,33 @@ def main():
         garbage.reverse()
         for i in garbage:
             del enemies[i]
+        
+        crashed_attacks, crashed_enemies = [], []
+        for i in range(len(attacks)):
+            for j in range(len(enemies)):
+                attack, enemy = attacks[i], enemies[j]
+                if crash(attack, enemy):
+                    crashed_attacks.append(i)
+                    crashed_enemies.append(j)
+                    enemy.hp -= 1
+
+        crashed_attacks = list(set(crashed_attacks))
+        crashed_enemies = list(set(crashed_enemies))
+        crashed_attacks.reverse()
+        crashed_enemies.reverse()
+
+        for i in crashed_attacks:
+            del attacks[i]
+        for i in crashed_enemies:
+            if enemies[i].hp == 0:
+                if enemies[i].width == 60:
+                    del enemies[i]
+                else:
+                    del enemies[i]
+        for i in range(len(enemies)):
+            enemy = enemies[i]
+            if crash(enemy, player):
+                running = False # while문 종료
 
         screen.fill(BLACK)
         player.show()
