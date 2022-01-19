@@ -38,7 +38,7 @@ def crash(a, b):
     else:
         return False
 
-
+      
 def main():
     left_go = False
     right_go = False
@@ -135,7 +135,7 @@ def main():
         garbage.reverse()
         for i in garbage:
             del enemies[i]
-        
+
         crashed_attacks, crashed_enemies = [], []
         for i in range(len(attacks)):
             for j in range(len(enemies)):
