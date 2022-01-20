@@ -7,3 +7,5 @@
 * SHMUP/image/enemy1.png - https://www.iconfinder.com
 * SHMUP/image/enemy2.png - https://www.iconfinder.com
 * SHMUP/image/lightning.png - https://www.pngwing.com
+### Font file
+* SHMUP/font/MaruBuri-Bold.ttf - https://hangeul.naver.com/font
