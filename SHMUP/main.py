@@ -1,8 +1,11 @@
 import pygame as pg
 from pygame.locals import *
 import random
+from datetime import datetime
 
+WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+YELLOW = (255, 255, 0)
 
 class Character:
     def __init__(self):
@@ -44,6 +47,7 @@ def main():
     right_go = False
     space_go = False
     k = 0
+    score, loss = 0, 0
 
     attacks = []
     enemies = []
@@ -54,6 +58,8 @@ def main():
     player.x = round(size[0] / 2) - round(player.width / 2)
     player.y = size[1] - player.height - 15
     player.velocity = 5
+
+    start_time = datetime.now()
 
     running = True
     while running:
@@ -77,6 +83,10 @@ def main():
                     right_go = False
                 elif event.key == K_SPACE:
                     space_go = False
+        
+        now_time = datetime.now()
+        delta_time = round((now_time - start_time).total_seconds())
+
         if left_go == True:
             player.x -= player.velocity
             if player.x <= 0:
@@ -135,6 +145,10 @@ def main():
         garbage.reverse()
         for i in garbage:
             del enemies[i]
+            loss += 1  # 화면 밖으로 적이 나가면, +1
+            score -= 10  # 점수 -10점
+            if score < 0:
+                score = 0
         
         crashed_attacks, crashed_enemies = [], []
         for i in range(len(attacks)):
@@ -156,8 +170,10 @@ def main():
             if enemies[i].hp == 0:
                 if enemies[i].width == 60:
                     del enemies[i]
+                    score += 1  # 일반 몹 처치 시 +1점
                 else:
                     del enemies[i]
+                    score += 10  # 보스 몹 처치 시 +10점
         for i in range(len(enemies)):
             enemy = enemies[i]
             if crash(enemy, player):
@@ -169,6 +185,11 @@ def main():
             attack.show()
         for enemy in enemies:
             enemy.show()
+        font = pg.font.Font("font/MaruBuri-Bold.ttf", 20)
+        text_state = font.render(f"| SCORE: {score} | LOSS: {loss} |", True, YELLOW)
+        text_time = font.render(f"TIME : {delta_time}", True, WHITE)
+        screen.blit(text_state, (10, 5))
+        screen.blit(text_time, (size[0] - 120, 5))
         pg.display.flip()
 
 
