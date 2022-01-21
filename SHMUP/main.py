@@ -41,6 +41,22 @@ def crash(a, b):
     else:
         return False
 
+def stand_by():
+    running = True
+    while running:
+        clock.tick(60)
+        for event in pg.event.get():
+            if event.type == QUIT:
+                running = False
+                return running
+            if event.type == KEYDOWN and event.key == K_SPACE:
+                return running
+        screen.fill(WHITE)
+        font = pg.font.Font("font/MaruBuri-Bold.ttf", 15)
+        text = font.render("PRESS SPACE KEY TO START THE GAME", True, BLACK)
+        screen.blit(text, (100, round(size[1] / 2 - 30)))
+        pg.display.flip()
+
 
 def main():
     left_go = False
@@ -201,8 +217,12 @@ if __name__ == "__main__":
     title = "Shoot'Em Up!!"
     pg.display.set_caption(title)
 
-    while True:
-        going = main()
-        if not going:
-            break
-    pg.quit()
+    ready = stand_by()
+    if not ready:
+        pg.quit()
+    else:
+        while True:
+            going = main()
+            if not going:
+                break
+        pg.quit()
