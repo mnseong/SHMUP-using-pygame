@@ -2,9 +2,11 @@ import pygame as pg
 from pygame.locals import *
 import random
 from datetime import datetime
+from time import sleep
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
 class Character:
@@ -12,18 +14,18 @@ class Character:
         self.x = 0
         self.y = 0
         self.velocity = 0
-    
+
     def put_img(self, address):
         if address[-3:] == "png":
             self.img = pg.image.load(address).convert_alpha()
         else:
             self.img = pg.image.load(address)
         self.width, self.height = self.img.get_size()
-    
+
     def change_size(self, width, height):
         self.img = pg.transform.scale(self.img, (width, height))
         self.width, self.height = self.img.get_size()
-    
+
     def show(self):
         screen.blit(self.img, (self.x, self.y))
 
@@ -40,6 +42,7 @@ def crash(a, b):
         return True
     else:
         return False
+
 
 def stand_by():
     running = True
@@ -64,6 +67,7 @@ def main():
     space_go = False
     k = 0
     score, loss = 0, 0
+    GAME_OVER = 0
 
     attacks = []
     enemies = []
@@ -99,7 +103,7 @@ def main():
                     right_go = False
                 elif event.key == K_SPACE:
                     space_go = False
-        
+
         now_time = datetime.now()
         delta_time = round((now_time - start_time).total_seconds())
 
@@ -111,7 +115,7 @@ def main():
             player.x += player.velocity
             if player.x >= size[0] - player.width:
                 player.x = size[0] - player.width
-        
+
         if space_go == True and k % 15 == 0:
             lightning = Character()
             lightning.put_img("image/lightning.png")
@@ -131,7 +135,7 @@ def main():
         garbage.reverse()
         for i in garbage:
             del attacks[i]
-    
+
         if random.random() > 0.98:
             mob = Enemy()
             mob.put_img("image/enemy1.png")
@@ -165,7 +169,7 @@ def main():
             score -= 10  # 점수 -10점
             if score < 0:
                 score = 0
-        
+
         crashed_attacks, crashed_enemies = [], []
         for i in range(len(attacks)):
             for j in range(len(enemies)):
@@ -194,6 +198,7 @@ def main():
             enemy = enemies[i]
             if crash(enemy, player):
                 running = False # while문 종료
+                GAME_OVER = 1
 
         screen.fill(BLACK)
         player.show()
@@ -206,6 +211,33 @@ def main():
         text_time = font.render(f"TIME : {delta_time}", True, WHITE)
         screen.blit(text_state, (10, 5))
         screen.blit(text_time, (size[0] - 120, 5))
+        pg.display.flip()
+    
+    while GAME_OVER:
+        clock.tick(60)
+        for event in pg.event.get():
+            if event.type == QUIT:
+                GAME_OVER = 0
+        font = pg.font.Font("font/MaruBuri-ExtraLight.ttf", 50)
+        text = font.render("GAME OVER", True, RED)
+        screen.blit(text, (100, round(size[1] / 2 - 60)))
+        pg.display.flip()
+        sleep(2)
+        GAME_OVER = 0
+
+    re = False
+    while not re:
+        clock.tick(60)
+        for event in pg.event.get():
+            if event.type == QUIT:
+                return re
+            if event.type == KEYDOWN and event.key == K_SPACE:
+                re = True
+                return re
+        screen.fill(BLACK)
+        font = pg.font.Font("font/MaruBuri-Bold.ttf", 20)
+        text = font.render("If you want to restart, press SPACE!", True, WHITE)
+        screen.blit(text, (80, round(size[1] / 2 - 30)))
         pg.display.flip()
 
 
@@ -222,7 +254,7 @@ if __name__ == "__main__":
         pg.quit()
     else:
         while True:
-            going = main()
-            if not going:
+            restart = main()
+            if not restart:
                 break
         pg.quit()
