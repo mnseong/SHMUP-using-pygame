@@ -9,3 +9,4 @@
 * SHMUP/image/lightning.png - https://www.pngwing.com
 ### Font file
 * SHMUP/font/MaruBuri-Bold.ttf - https://hangeul.naver.com/font
+* SHMUP/font/MaruBuri-ExtraLight.ttf - https://hangeul.naver.com/font
